@@ -1,0 +1,8 @@
+flysystem:
+  storages:
+    default.storage:
+      adapter: 'league.flysystem.aws_s3_v3'
+      options:
+        client: '@app.aws_s3_client'
+        bucket: 'mybucket'
+        prefix: 'uploads/'

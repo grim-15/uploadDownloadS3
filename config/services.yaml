@@ -1,24 +1,48 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+# config/services.yaml
 parameters:
+    minio.endpoint: 'http://localhost:9000'
+    minio.region: 'us-east-1'
+    minio.key: 'LnXqkCZEYT9kJjWO95JK'
+    minio.secret: 'FCpVCQ5iLB1fvi4qu142vLo5ROphoOV87G9x7mFY'
+    minio.bucketName: 'mybucket'
+
 
 services:
-    # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true
+        autoconfigure: true
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
+    App\Controller\FileController:
+        arguments:
+            $defaultStorage: '@League\Flysystem\FilesystemOperator'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # client MinIO
+    app.minio_client:
+        class: Aws\S3\S3Client
+        factory: ['Aws\S3\S3Client', 'factory']
+        arguments:
+            - version: 'latest'
+              region: 'us-east-1'
+              endpoint: 'http://localhost:9000'  
+              use_path_style_endpoint: true
+              credentials:
+                  key: 'LnXqkCZEYT9kJjWO95JK'      
+                  secret: 'FCpVCQ5iLB1fvi4qu142vLo5ROphoOV87G9x7mFY'   
+
+    # FilesystemOperator avec  l adaptateur MinIO
+    League\Flysystem\FilesystemOperator:
+        class: League\Flysystem\Filesystem
+        arguments:
+            - '@League\Flysystem\AwsS3V3\AwsS3V3Adapter'
+
+    League\Flysystem\AwsS3V3\AwsS3V3Adapter:
+        class: League\Flysystem\AwsS3V3\AwsS3V3Adapter
+        arguments:
+            $client: '@app.minio_client'
+            $bucket: 'mybucket'  
+            $prefix: 'uploads'   
+    
+    App\Controller\DownloadController:
+        autowire: true
+        autoconfigure: true
+        

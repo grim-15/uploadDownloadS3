@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Download Files{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Download Files</h1>
+
+        <button class="btn btn-primary mb-3" id="toggleFilesButton">Show Files</button>
+        
+        <div class="download-section" style="display: none;" id="fileListSection">
+            <ul>
+                {% for file in files %}
+                    <li>
+                        <a href="{{ path('download_file', {'filename': file|url_encode}) }}">{{ file }}</a>
+                    </li>
+                {% else %}
+                    <li>No files available for download.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('toggleFilesButton').addEventListener('click', function() {
+            var fileListSection = document.getElementById('fileListSection');
+            if (fileListSection.style.display === 'none') {
+                fileListSection.style.display = 'block';
+                this.textContent = 'Hide Files';  
+            } else {
+                fileListSection.style.display = 'none';
+                this.textContent = 'Show Files';  
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,3 +1,29 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+
+upload:
+    path: /upload
+    controller: 'App\Controller\FileController::upload'
+    methods: ['GET', 'POST']
+
+download:
+    path: /download
+    controller: 'App\Controller\DownloadController::listFiles'
+    methods: ['GET']
+
+download_file:
+    path: /download/{filename}
+    controller: 'App\Controller\DownloadController::downloadFile'
+    methods: ['GET']
+    requirements:
+        filename: ".+"
+
+view_document:
+    path: /view/{path}
+    controller: 'App\Controller\DownloadController::viewDocument'
+    methods: ['GET']
+    requirements:
+        filename: ".+"
+        
+

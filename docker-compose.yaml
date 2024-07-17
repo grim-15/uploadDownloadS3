@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: LnXqkCZEYT9kJjWO95JK
+      MINIO_ROOT_PASSWORD: FCpVCQ5iLB1fvi4qu142vLo5ROphoOV87G9x7mFY
+    command: server /data --console-address ":9001"
